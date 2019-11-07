@@ -1,0 +1,6 @@
+.vscode
+node_modules
+dist
+public
+server/config/keys.js
+yarn.lock
