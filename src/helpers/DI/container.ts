@@ -11,6 +11,7 @@ export const Container = new (class {
     return this.resolve(classToUse).constructedClass;
   }
 
+  // TODO: is working, but should be migrated to @Inject way
   public injectValue<T>(token: Token<T>, value: T): T {
     if (this.providers.get(token)) {
       return (this.providers.get(token) as ValueProvider<T>).useValue;

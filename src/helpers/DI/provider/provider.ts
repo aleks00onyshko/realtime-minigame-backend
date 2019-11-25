@@ -5,6 +5,7 @@ export interface ClassProvider<T> {
   constructedClass: T;
 }
 
+// @Inject way
 export interface ValueProvider<T> {
   useValue: T;
 }
