@@ -1,5 +1,5 @@
 import { RequestHandler } from 'express';
-import { Method } from '../../core';
+import { Method } from 'core';
 
 export interface BaseHandler {
   path: string;

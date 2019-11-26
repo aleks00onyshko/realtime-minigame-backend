@@ -1,7 +1,7 @@
 import { RequestHandler, Request, Response } from 'express';
 
-import { BaseHandler, User, IUserModel } from '../../../../../models';
-import { Method } from '../../../../../core';
+import { BaseHandler, User, IUserModel } from 'models';
+import { Method } from 'core';
 
 export class RegisterHandler implements BaseHandler {
   public readonly path: string;
@@ -23,10 +23,10 @@ export class RegisterHandler implements BaseHandler {
 
         await newUser.encryptPassword(password);
 
-        const user = await newUser.save();
+        const user: IUserModel = await newUser.save();
 
         if (user) {
-          const accessToken = user.generateAccessToken();
+          const accessToken: string = user.generateAccessToken();
 
           return res.status(200).json({ accessToken });
         } else {

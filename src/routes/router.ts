@@ -1,6 +1,6 @@
 import { Router as ExpressRouter } from 'express';
-import { Container, Injectable } from '../helpers/DI';
-import { Router, BaseController } from '../models';
+import { Container, Injectable } from 'DI';
+import { Router, BaseController } from 'models';
 
 import { controllers } from './controllers';
 
@@ -16,7 +16,8 @@ export class AppRouter implements Router {
   setControllers(controllers: BaseController[]): void {
     controllers.forEach((controller: BaseController) => {
       this.expressRouter.use(controller.path, controller.expressRouter);
-    })
+      console.log('hello');
+    });
   }
 }
 

@@ -1,7 +1,7 @@
 import { RequestHandler, Request, Response } from 'express';
 
-import { BaseHandler, User, IUserModel } from '../../../../../models';
-import { Method } from '../../../../../core';
+import { BaseHandler, User, IUserModel } from 'models';
+import { Method } from 'core';
 
 export class LoginHandler implements BaseHandler {
   public readonly path: string;

@@ -1,6 +1,6 @@
 import { Router as ExpressRouter } from 'express';
 
-import { BaseController, BaseHandler } from '../../../models';
+import { BaseController, BaseHandler } from 'models';
 import { handlers } from './handlers';
 
 export class UserController implements BaseController {
@@ -15,7 +15,6 @@ export class UserController implements BaseController {
 
   public setHandlers(handlers: BaseHandler[]): void {
     handlers.forEach((handler: BaseHandler) => {
-      console.log('handler', handler);
       this.expressRouter[handler.method](handler.path, handler.handle());
     });
   }

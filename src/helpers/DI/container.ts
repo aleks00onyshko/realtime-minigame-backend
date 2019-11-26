@@ -18,11 +18,10 @@ export const Container = new (class {
     }
 
     this.providers.set(token, { useValue: value });
-    console.log(this.providers);
 
     return (this.providers.get(token) as ValueProvider<T>).useValue;
   }
-
+  // can't use primitive value in the constructor yet
   private resolve<T>(target: Type<T>): ClassProvider<T> {
     const deps = Reflect.getMetadata('design:paramtypes', target) || [];
 

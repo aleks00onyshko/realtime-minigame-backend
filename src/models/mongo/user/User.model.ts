@@ -2,7 +2,7 @@ import mongoose, { Schema, Document, model } from 'mongoose';
 import * as jwt from 'jsonwebtoken';
 import * as bcrypt from 'bcryptjs';
 
-import { accessTokenSecret } from '../../../config';
+import { accessTokenSecret } from 'config';
 import { IUser } from './user.interface';
 
 export interface IUserModel extends IUser, Document {
