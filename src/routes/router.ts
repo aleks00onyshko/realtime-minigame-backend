@@ -13,10 +13,9 @@ export class AppRouter implements Router {
     this.setControllers(controllers);
   }
 
-  setControllers(controllers: BaseController[]): void {
+  private setControllers(controllers: BaseController[]): void {
     controllers.forEach((controller: BaseController) => {
       this.expressRouter.use(controller.path, controller.expressRouter);
-      console.log('hello');
     });
   }
 }
