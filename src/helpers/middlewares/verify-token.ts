@@ -1,7 +1,8 @@
-import { Response, NextFunction } from 'express';
+import { promises as fs } from 'fs';
+import * as path from 'path';
 import * as jwt from 'jsonwebtoken';
+import { Response, NextFunction } from 'express';
 
-import { accessTokenSecret } from 'config';
 import { AppRequest } from 'models';
 
 export async function verifyToken(req: AppRequest, res: Response, next: NextFunction) {
@@ -9,7 +10,9 @@ export async function verifyToken(req: AppRequest, res: Response, next: NextFunc
 
   if (token) {
     try {
-      const decodedToken = <object>jwt.verify(token, accessTokenSecret);
+      const pathToSecret = path.join(__dirname, '../../config/keys', 'private.key');
+      const privateKey = await fs.readFile(pathToSecret, 'utf8');
+      const decodedToken = jwt.verify(token, privateKey) as object;
 
       req.locals = {
         tokenInfo: { ...decodedToken }

@@ -26,9 +26,9 @@ export class RegisterHandler implements BaseHandler {
         const user: IUserModel = await newUser.save();
 
         if (user) {
-          const accessToken: string = user.generateAccessToken();
+          const token: string = await user.generateAccessToken();
 
-          return res.status(200).json({ accessToken });
+          return res.status(200).json({ token });
         } else {
           return res.status(500).json({ message: 'Error was occured!' });
         }

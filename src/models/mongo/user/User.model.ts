@@ -1,8 +1,9 @@
 import mongoose, { Schema, Document, model } from 'mongoose';
+import { promises as fs } from 'fs';
+import * as path from 'path';
 import * as jwt from 'jsonwebtoken';
 import * as bcrypt from 'bcryptjs';
 
-import { accessTokenSecret } from 'config';
 import { IUser } from './user.interface';
 
 export interface IUserModel extends IUser, Document {
@@ -17,14 +18,17 @@ const userSchema: Schema = new mongoose.Schema({
   username: { type: String, required: true }
 });
 
-userSchema.methods.generateAccessToken = function(): string {
+userSchema.methods.generateAccessToken = async function(): Promise<string> {
+  const pathToSecret = path.join(__dirname, '../../../config/keys', 'private.key');
+  const privateKey = await fs.readFile(pathToSecret);
+
   return jwt.sign(
     {
       _id: this._id,
       email: this.email,
       username: this.username
     },
-    accessTokenSecret,
+    privateKey,
     { expiresIn: '3h' }
   );
 };

@@ -19,9 +19,9 @@ export class LoginHandler implements BaseHandler {
 
       if (user) {
         if (await user.isPasswordValid(password)) {
-          const accessToken: string = user.generateAccessToken();
+          const token: string = await user.generateAccessToken();
 
-          return res.status(200).json({ accessToken });
+          return res.status(200).json({ token });
         } else {
           return res.status(500).json({ message: 'Wrong password!' });
         }
