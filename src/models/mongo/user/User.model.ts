@@ -4,9 +4,9 @@ import * as path from 'path';
 import * as jwt from 'jsonwebtoken';
 import * as bcrypt from 'bcryptjs';
 
-import { IUser } from './user.interface';
+import { User } from './user.interface';
 
-export interface IUserModel extends IUser, Document {
+export interface UserModel extends User, Document {
   generateAccessToken: () => string;
   isPasswordValid: (password: string) => Promise<boolean>;
   encryptPassword: (password: string) => Promise<void>;
@@ -41,4 +41,4 @@ userSchema.methods.encryptPassword = async function(password: string): Promise<v
   this.password = await bcrypt.hash(password, await bcrypt.genSalt(10));
 };
 
-export const User: mongoose.Model<IUserModel> = model<IUserModel>('users', userSchema);
+export const MongoUserModel: mongoose.Model<UserModel> = model<UserModel>('users', userSchema);

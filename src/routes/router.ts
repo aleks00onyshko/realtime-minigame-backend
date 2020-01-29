@@ -13,7 +13,7 @@ export class AppRouter implements Router {
     this.setControllers(controllers);
   }
 
-  private setControllers(controllers: BaseController[]): void {
+  public setControllers(controllers: BaseController[]): void {
     controllers.forEach((controller: BaseController) => {
       this.expressRouter.use(controller.path, controller.expressRouter);
     });
