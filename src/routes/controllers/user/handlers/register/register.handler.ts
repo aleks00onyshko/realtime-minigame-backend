@@ -1,6 +1,6 @@
 import { RequestHandler, Request, Response } from 'express';
 
-import { BaseHandler, User, IUserModel } from 'models';
+import { BaseHandler, MongoUserModel, UserModel } from 'models';
 import { Method } from 'core';
 
 export class RegisterHandler implements BaseHandler {
@@ -13,17 +13,17 @@ export class RegisterHandler implements BaseHandler {
   }
 
   public handle(): RequestHandler {
-    return async function register(req: Request, res: Response): Promise<Response> {
+    return async (req: Request, res: Response): Promise<Response> => {
       const { email, password, username } = req.body;
 
-      const doesUserExist: IUserModel = await User.findOne({ email });
+      const doesUserExist: UserModel = await MongoUserModel.findOne({ email });
 
       if (!doesUserExist) {
-        const newUser: IUserModel = new User({ email, password, username });
+        const newUser: UserModel = new MongoUserModel({ email, password, username });
 
         await newUser.encryptPassword(password);
 
-        const user: IUserModel = await newUser.save();
+        const user: UserModel = await newUser.save();
 
         if (user) {
           const token: string = await user.generateAccessToken();

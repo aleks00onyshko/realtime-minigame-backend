@@ -9,6 +9,10 @@ export const Container = new (class {
   public providers = new Map<Token<any>, Provider<any>>();
 
   public injectSingleton<T>(classToUse: Type<T>): T {
+    if (this.providers.get(classToUse)) {
+      return (this.providers.get(classToUse) as ClassProvider<T>).constructedClass;
+    }
+
     return this.resolve(classToUse).constructedClass;
   }
 
@@ -22,13 +26,12 @@ export const Container = new (class {
     return (this.providers.get(token) as ValueProvider<T>).useValue;
   }
 
-  // can't use primitive value in the constructor yet
   private resolve<T>(target: Type<T>): ClassProvider<T> {
     const deps = Reflect.getMetadata('design:paramtypes', target) || [];
 
     const constructedClass = new target(
       ...deps.map((dep: Type<T>, index: number) => {
-        // it handles circular dependency, actually I don't know how yet :))
+        // it handles circular dependency
         if (dep === undefined) {
           throw new Error(`Recursive dependency detected in constructor for type ${target.name} at index ${index}`);
         }
@@ -47,7 +50,7 @@ export const Container = new (class {
     return this.providers.get(target) as ClassProvider<T>;
   }
 
-  private getInjectionToken(target: any, index: number) {
-    return Reflect.getMetadata(INJECT_METADATA_KEY, target, `index-${index}`) as Token<any> | undefined;
+  private getInjectionToken(target: any, index: number): Token<any> {
+    return Reflect.getMetadata(INJECT_METADATA_KEY, target, `index-${index}`) as Token<any>;
   }
 })();
