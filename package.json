@@ -2,7 +2,7 @@
   "version": "0.0.0",
   "main": "src/index.ts",
   "scripts": {
-    "dev": "nodemon",
+    "start": "nodemon",
     "replace-path": "node -r tsconfig-paths/register -r ts-node/register ./src/index.ts"
   },
   "dependencies": {
