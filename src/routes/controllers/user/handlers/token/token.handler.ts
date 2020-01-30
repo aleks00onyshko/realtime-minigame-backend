@@ -4,6 +4,13 @@ import { Request, Response, RequestHandler } from 'express';
 import { Injectable, Container } from 'DI';
 import { Status } from 'core/enums';
 
+interface TokenHandlerRequest extends Request {
+  body: {
+    refreshToken: string;
+    email: string;
+  };
+}
+
 @Injectable()
 export class TokenHandler implements BaseHandler {
   public readonly path: string;
@@ -16,9 +23,8 @@ export class TokenHandler implements BaseHandler {
   }
 
   public handle(): RequestHandler {
-    return async (req: Request, res: Response): Promise<Response> => {
-      const { someInfo } = req.body;
-      someInfo;
+    return async (req: TokenHandlerRequest, res: Response): Promise<Response> => {
+      console.log('cookies', req.cookies);
       return res.status(Status.Success).json({ info: 'some info' });
     };
   }

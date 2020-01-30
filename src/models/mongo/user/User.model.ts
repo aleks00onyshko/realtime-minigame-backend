@@ -25,12 +25,14 @@ userSchema.methods.generateAccessToken = async function(): Promise<string> {
       username: this.username
     },
     process.env.ACCESS_TOKEN_SECRET,
-    { expiresIn: '3h' }
+    { expiresIn: process.env.ACCESS_TOKEN_EXPIRATION_TIME }
   );
 };
 
 userSchema.methods.generateRefreshToken = async function(): Promise<string> {
-  return jwt.sign({}, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '2d' });
+  return jwt.sign({}, process.env.REFRESH_TOKEN_SECRET, {
+    expiresIn: process.env.REFRESH_TOKEN_EXPIRATION_TIME
+  });
 };
 
 userSchema.methods.isPasswordValid = async function(password: string): Promise<boolean> {
