@@ -1,7 +1,7 @@
 import { RequestHandler, Request, Response } from 'express';
 
 import { BaseHandler, MongoUserModel, UserModel } from 'models';
-import { Method } from 'core';
+import { Method, Status } from 'core/enums';
 
 export class LoginHandler implements BaseHandler {
   public readonly path: string;
@@ -19,14 +19,15 @@ export class LoginHandler implements BaseHandler {
 
       if (user) {
         if (await user.isPasswordValid(password)) {
-          const token: string = await user.generateAccessToken();
+          const accesstToken: string = await user.generateAccessToken();
+          const refreshToken: string = await user.generateRefreshToken();
 
-          return res.status(200).json({ token });
+          return res.status(Status.Success).json({ accesstToken, refreshToken });
         } else {
-          return res.status(500).json({ message: 'Wrong password!' });
+          return res.status(Status.Error).json({ message: 'Wrong password!' });
         }
       } else {
-        return res.status(404).json({ message: 'User with such email does not exist!' });
+        return res.status(Status.NotFound).json({ message: 'User with such email does not exist!' });
       }
     };
   }

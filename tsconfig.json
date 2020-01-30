@@ -17,6 +17,8 @@
       "config": ["src/config"],
       "models": ["src/models"],
       "core": ["src/core"],
+      "core/enums": ["src/core/enums"],
+      "core/services": ["src/core/services"],
       "helpers": ["src/helpers"],
       "DI": ["src/helpers/DI"]
     },

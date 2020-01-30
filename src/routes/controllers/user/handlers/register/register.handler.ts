@@ -1,7 +1,7 @@
 import { RequestHandler, Request, Response } from 'express';
 
 import { BaseHandler, MongoUserModel, UserModel } from 'models';
-import { Method } from 'core';
+import { Method, Status } from 'core/enums';
 
 export class RegisterHandler implements BaseHandler {
   public readonly path: string;
@@ -26,14 +26,15 @@ export class RegisterHandler implements BaseHandler {
         const user: UserModel = await newUser.save();
 
         if (user) {
-          const token: string = await user.generateAccessToken();
+          const accesstToken: string = await user.generateAccessToken();
+          const refreshToken: string = await user.generateRefreshToken();
 
-          return res.status(200).json({ token });
+          return res.status(Status.Success).json({ accesstToken, refreshToken });
         } else {
-          return res.status(500).json({ message: 'Error was occured!' });
+          return res.status(Status.Error).json({ message: 'Error was occured!' });
         }
       } else {
-        return res.status(401).json({ message: 'User with such email is already exist!' });
+        return res.status(Status.Unauthorized).json({ message: 'User with such email is already exist!' });
       }
     };
   }

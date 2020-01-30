@@ -7,7 +7,8 @@ import * as bcrypt from 'bcryptjs';
 import { User } from './user.interface';
 
 export interface UserModel extends User, Document {
-  generateAccessToken: () => string;
+  generateAccessToken: () => Promise<string>;
+  generateRefreshToken: () => Promise<string>;
   isPasswordValid: (password: string) => Promise<boolean>;
   encryptPassword: (password: string) => Promise<void>;
 }
@@ -19,7 +20,7 @@ const userSchema: Schema = new mongoose.Schema({
 });
 
 userSchema.methods.generateAccessToken = async function(): Promise<string> {
-  const pathToSecret = path.join(__dirname, '../../../config/keys', 'private.key');
+  const pathToSecret = path.join(__dirname, '../../../config/keys', 'access-private.key');
   const privateKey = await fs.readFile(pathToSecret);
 
   return jwt.sign(
@@ -31,6 +32,13 @@ userSchema.methods.generateAccessToken = async function(): Promise<string> {
     privateKey,
     { expiresIn: '3h' }
   );
+};
+
+userSchema.methods.generateRefreshToken = async function(): Promise<string> {
+  const pathToSecret = path.join(__dirname, '../../../config/keys', 'refresh-private.key');
+  const privateKey = await fs.readFile(pathToSecret);
+
+  return jwt.sign({}, privateKey, { expiresIn: '2d' });
 };
 
 userSchema.methods.isPasswordValid = async function(password: string): Promise<boolean> {

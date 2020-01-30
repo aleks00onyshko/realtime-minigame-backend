@@ -1,8 +1,8 @@
 import { BaseHandler } from 'models';
-import { Method } from 'core';
+import { Method, TokenService } from 'core';
 import { Request, Response, RequestHandler } from 'express';
-import { TokenService } from 'core';
 import { Injectable, Container } from 'DI';
+import { Status } from 'core/enums';
 
 @Injectable()
 export class TokenHandler implements BaseHandler {
@@ -19,8 +19,8 @@ export class TokenHandler implements BaseHandler {
     return async (req: Request, res: Response): Promise<Response> => {
       const { someInfo } = req.body;
       someInfo;
-      return res.status(200).json({ info: 'some info' });
-    }
+      return res.status(Status.Success).json({ info: 'some info' });
+    };
   }
 }
 

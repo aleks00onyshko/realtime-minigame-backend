@@ -1,1 +1,2 @@
-export * from './methods.enum';
+export * from './methods';
+export * from './statuses';

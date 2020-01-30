@@ -2,6 +2,7 @@ import { promises as fs } from 'fs';
 import * as path from 'path';
 import * as jwt from 'jsonwebtoken';
 import { Response, NextFunction } from 'express';
+import { Status } from 'core/enums';
 
 import { AppRequest } from 'models';
 
@@ -10,7 +11,7 @@ export async function verifyToken(req: AppRequest, res: Response, next: NextFunc
 
   if (token) {
     try {
-      const pathToSecret = path.join(__dirname, '../../config/keys', 'private.key');
+      const pathToSecret = path.join(__dirname, '../../config/keys', 'access-private.key');
       const privateKey = await fs.readFile(pathToSecret, 'utf8');
       const decodedToken = jwt.verify(token, privateKey) as object;
 
@@ -20,7 +21,7 @@ export async function verifyToken(req: AppRequest, res: Response, next: NextFunc
 
       next();
     } catch (error) {
-      return res.status(401).json(error);
+      return res.status(Status.Unauthorized).json(error);
     }
   }
 }

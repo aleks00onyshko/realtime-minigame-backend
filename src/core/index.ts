@@ -1,2 +1,2 @@
-export * from './enums';
+export * from './enums/methods';
 export * from './services';
