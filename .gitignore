@@ -4,3 +4,4 @@ dist
 public
 server/config/keys
 yarn.lock
+.env

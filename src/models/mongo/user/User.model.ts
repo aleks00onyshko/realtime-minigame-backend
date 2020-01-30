@@ -1,6 +1,4 @@
 import mongoose, { Schema, Document, model } from 'mongoose';
-import { promises as fs } from 'fs';
-import * as path from 'path';
 import * as jwt from 'jsonwebtoken';
 import * as bcrypt from 'bcryptjs';
 
@@ -20,25 +18,19 @@ const userSchema: Schema = new mongoose.Schema({
 });
 
 userSchema.methods.generateAccessToken = async function(): Promise<string> {
-  const pathToSecret = path.join(__dirname, '../../../config/keys', 'access-private.key');
-  const privateKey = await fs.readFile(pathToSecret);
-
   return jwt.sign(
     {
       _id: this._id,
       email: this.email,
       username: this.username
     },
-    privateKey,
+    process.env.ACCESS_TOKEN_SECRET,
     { expiresIn: '3h' }
   );
 };
 
 userSchema.methods.generateRefreshToken = async function(): Promise<string> {
-  const pathToSecret = path.join(__dirname, '../../../config/keys', 'refresh-private.key');
-  const privateKey = await fs.readFile(pathToSecret);
-
-  return jwt.sign({}, privateKey, { expiresIn: '2d' });
+  return jwt.sign({}, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '2d' });
 };
 
 userSchema.methods.isPasswordValid = async function(password: string): Promise<boolean> {
