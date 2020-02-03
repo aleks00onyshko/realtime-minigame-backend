@@ -2,10 +2,10 @@ import express, { Application } from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
-import dotenv from 'dotenv';
 
+import { PORT, MONGO_URL } from 'utils';
 import { AppRouter } from './routes';
-import { Container, Injectable } from './helpers';
+import { Container, Injectable } from 'DI';
 
 @Injectable()
 class Server {
@@ -15,7 +15,7 @@ class Server {
 
   constructor(private router: AppRouter) {
     this.app = express();
-    this.port = +process.env.PORT || 3000;
+    this.port = PORT || 3000;
 
     this.setMiddlewares();
     this.setDatabaseConnection();
@@ -27,14 +27,13 @@ class Server {
   }
 
   private setMiddlewares(): void {
-    dotenv.config();
     this.app.use(cors());
     this.app.use(bodyParser.json());
     this.app.use(bodyParser.urlencoded({ extended: true }));
   }
 
   private setDatabaseConnection(): void {
-    mongoose.connect(process.env.MONGO_URL, () => {
+    mongoose.connect(MONGO_URL, () => {
       console.log('Successfully connected to MongoDb');
     });
   }

@@ -20,6 +20,7 @@
       "core/enums": ["src/core/enums"],
       "core/services": ["src/core/services"],
       "helpers": ["src/helpers"],
+      "utils": ["src/utils"],
       "DI": ["src/helpers/DI"]
     },
     "allowJs": true,
