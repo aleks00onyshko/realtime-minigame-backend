@@ -24,9 +24,6 @@ export class LoginHandler implements BaseHandler {
           const { accessToken, refreshToken } = this.authService.generateTokens(email, user.username);
 
           this.authService.addTokensPair(refreshToken, accessToken);
-          this.authService.test = true;
-
-          console.log('Container', Container.providers.get(AuthenticationService));
 
           return res.status(Status.Success).json({ accessToken, refreshToken });
         } else {
