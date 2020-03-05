@@ -1,7 +1,8 @@
 import { Request } from 'express';
+import { Token } from '../token';
 
-export interface AppRequest extends Request {
+export interface VerifiedRequest extends Request {
   locals: {
-    tokenInfo: object | null;
+    tokenInfo: Token | null;
   };
 }

@@ -1,13 +1,16 @@
 import { RequestHandler, Request, Response } from 'express';
 
 import { BaseHandler, MongoUserModel, UserModel } from 'models';
-import { Method, Status } from 'core/enums';
+import { Method, Status, Errors } from 'core/enums';
+import { AuthenticationService } from 'core';
+import { Injectable, Container } from 'DI';
 
+@Injectable()
 export class RegisterHandler implements BaseHandler {
   public readonly path: string;
   public readonly method: Method;
 
-  constructor() {
+  constructor(private authService: AuthenticationService) {
     this.path = '/register';
     this.method = Method.Post;
   }
@@ -16,28 +19,29 @@ export class RegisterHandler implements BaseHandler {
     return async (req: Request, res: Response): Promise<Response> => {
       const { email, password, username } = req.body;
 
-      const doesUserExist: UserModel = await MongoUserModel.findOne({ email });
+      const user: UserModel = await MongoUserModel.findOne({ email });
 
-      if (!doesUserExist) {
+      if (!user) {
         const newUser: UserModel = new MongoUserModel({ email, password, username });
 
-        await newUser.encryptPassword(password);
+        newUser.password = await this.authService.encryptPassword(password);
 
         const user: UserModel = await newUser.save();
 
         if (user) {
-          const accesstToken: string = await user.generateAccessToken();
-          const refreshToken: string = await user.generateRefreshToken();
+          const { accessToken, refreshToken } = this.authService.generateTokens(email, user.username);
 
-          return res.status(Status.Success).json({ accesstToken, refreshToken });
+          this.authService.addTokensPair(refreshToken, accessToken);
+
+          return res.status(Status.Success).json({ accessToken, refreshToken });
         } else {
-          return res.status(Status.Error).json({ message: 'Error was occured!' });
+          return res.status(Status.Error).json({ message: Errors.Error });
         }
       } else {
-        return res.status(Status.Unauthorized).json({ message: 'User with such email is already exist!' });
+        return res.status(Status.Unauthorized).json({ message: Errors.UserDoesNotExist });
       }
     };
   }
 }
 
-export const registerHandler = new RegisterHandler();
+export const registerHandler = Container.injectSingleton(RegisterHandler);

@@ -45,6 +45,14 @@ export const Container = new (class {
         return this.resolve(dep).constructedClass;
       })
     );
+
+    // checking if child dependency exists when resolve is called recursively,
+    // because when some class is dependent on others classes, it is going to be replaced every time
+    // when each class is resolved without this check. Yes, I know, unit tests are needed!!!
+    if (this.providers.get(target)) {
+      return this.providers.get(target) as ClassProvider<T>;
+    }
+
     this.providers.set(target, { useClass: target, constructedClass });
 
     return this.providers.get(target) as ClassProvider<T>;

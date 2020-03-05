@@ -1,13 +1,15 @@
 import { RequestHandler, Request, Response } from 'express';
 
 import { BaseHandler, MongoUserModel, UserModel } from 'models';
-import { Method, Status } from 'core/enums';
+import { Method, Status, AuthenticationService, Errors } from 'core';
+import { Injectable, Container } from 'DI';
 
+@Injectable()
 export class LoginHandler implements BaseHandler {
   public readonly path: string;
   public readonly method: Method;
 
-  constructor() {
+  constructor(private authService: AuthenticationService) {
     this.path = '/login';
     this.method = Method.Post;
   }
@@ -18,19 +20,23 @@ export class LoginHandler implements BaseHandler {
       const user: UserModel = await MongoUserModel.findOne({ email });
 
       if (user) {
-        if (await user.isPasswordValid(password)) {
-          const accesstToken: string = await user.generateAccessToken();
-          const refreshToken: string = await user.generateRefreshToken();
+        if (await this.authService.isPasswordValid(password, user.password)) {
+          const { accessToken, refreshToken } = this.authService.generateTokens(email, user.username);
 
-          return res.status(Status.Success).json({ accesstToken, refreshToken });
+          this.authService.addTokensPair(refreshToken, accessToken);
+          this.authService.test = true;
+
+          console.log('Container', Container.providers.get(AuthenticationService));
+
+          return res.status(Status.Success).json({ accessToken, refreshToken });
         } else {
-          return res.status(Status.Error).json({ message: 'Wrong password!' });
+          return res.status(Status.Error).json({ message: Errors.InvalidPassword });
         }
       } else {
-        return res.status(Status.NotFound).json({ message: 'User with such email does not exist!' });
+        return res.status(Status.NotFound).json({ message: Errors.UserDoesNotExist });
       }
     };
   }
 }
 
-export const loginHandler = new LoginHandler();
+export const loginHandler = Container.injectSingleton(LoginHandler);

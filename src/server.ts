@@ -44,4 +44,3 @@ class Server {
 }
 
 export default Container.injectSingleton(Server);
-console.log(Container.providers);

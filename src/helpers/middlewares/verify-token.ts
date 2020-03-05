@@ -1,19 +1,16 @@
-import { promises as fs } from 'fs';
-import * as path from 'path';
 import * as jwt from 'jsonwebtoken';
 import { Response, NextFunction } from 'express';
-import { Status } from 'core/enums';
+import { Status, Errors } from 'core/enums';
+import { Token, VerifiedRequest } from 'models';
+import { ACCESS_TOKEN_SECRET } from 'utils';
 
-import { AppRequest } from 'models';
-
-export async function verifyToken(req: AppRequest, res: Response, next: NextFunction) {
-  const token: string = req.headers.authorization;
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+export async function verifyToken(req: VerifiedRequest, res: Response, next: NextFunction) {
+  const token: string = req.cookies.accessToken;
 
   if (token) {
     try {
-      const pathToSecret = path.join(__dirname, '../../config/keys', 'access-private.key');
-      const privateKey = await fs.readFile(pathToSecret, 'utf8');
-      const decodedToken = jwt.verify(token, privateKey) as object;
+      const decodedToken = jwt.verify(token, ACCESS_TOKEN_SECRET) as Token;
 
       req.locals = {
         tokenInfo: { ...decodedToken }
@@ -21,7 +18,9 @@ export async function verifyToken(req: AppRequest, res: Response, next: NextFunc
 
       next();
     } catch (error) {
-      return res.status(Status.Unauthorized).json(error);
+      return res.status(Status.Unauthorized).json({ message: Errors.AccessTokenInvalid });
     }
+  } else {
+    return res.status(Status.Unauthorized).json({ message: Errors.Error });
   }
 }
