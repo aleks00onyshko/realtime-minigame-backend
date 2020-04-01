@@ -1,13 +1,14 @@
-import { BaseHandler, MongoUserModel, User } from 'models';
+import { BaseHandler, MongoUserModel, UserModel } from 'models';
 import { Method, AuthenticationService, Status, Errors } from 'core';
 import { Request, Response, RequestHandler } from 'express';
 import { Injectable, Container } from 'DI';
+import { REFRESH_TOKEN_SECRET } from 'utils';
 
 interface TokenHandlerRequest extends Request {
   body: {
     refreshToken: string;
     accessToken: string;
-    user: User;
+    email: string;
   };
 }
 
@@ -23,15 +24,19 @@ export class TokenHandler implements BaseHandler {
 
   public handle(): RequestHandler {
     return async (req: TokenHandlerRequest, res: Response): Promise<Response> => {
-      const { accessToken, refreshToken, user } = req.body;
-      const doesUserExist = await MongoUserModel.findOne({ email: user.email });
+      const { accessToken, refreshToken, email } = req.body;
+      const user: UserModel = await MongoUserModel.findOne({ email });
 
-      if (doesUserExist && this.authService.isResfreshTokenValid(refreshToken, accessToken)) {
+      if (
+        user &&
+        this.authService.tokensPairExist(refreshToken, accessToken) &&
+        this.authService.tokenValid(refreshToken, REFRESH_TOKEN_SECRET)
+      ) {
         const accessToken = this.authService.generateAccessToken(user.email, user.username);
 
         this.authService.updateAccessToken(refreshToken, accessToken);
 
-        return res.status(Status.Success).json({ accessToken });
+        return res.status(Status.Success).json({ accessToken, refreshToken });
       } else {
         return res.status(Status.Error).json({ message: Errors.RefreshTokenInvalid });
       }

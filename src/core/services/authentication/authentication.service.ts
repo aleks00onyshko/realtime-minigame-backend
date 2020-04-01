@@ -8,16 +8,11 @@ import {
   REFRESH_TOKEN_SECRET
 } from 'utils';
 import { Injectable, Container } from 'DI';
-
-type Tokens = {
-  accessToken: string;
-  refreshToken: string;
-};
+import { Tokens } from 'models';
 
 @Injectable()
 export class AuthenticationService {
   public tokensMap = new Map<string, string>();
-  public test = false;
 
   public addTokensPair(refreshToken: string, accessToken: string): void {
     this.tokensMap.set(refreshToken, accessToken);
@@ -27,15 +22,17 @@ export class AuthenticationService {
     this.tokensMap.delete(refreshToken);
   }
 
-  public isResfreshTokenValid(refreshToken: string, accessToken: string): boolean {
-    console.log('token map', this.tokensMap);
-    console.log('auth service', this.tokensMap.has(refreshToken) && this.tokensMap.get(refreshToken) === accessToken);
+  public tokensPairExist(refreshToken: string, accessToken: string): boolean {
+    return this.tokensMap.has(refreshToken) && this.tokensMap.get(refreshToken) === accessToken;
+  }
 
-    return (
-      this.tokensMap.has(refreshToken) &&
-      this.tokensMap.get(refreshToken) === accessToken &&
-      !(jwt.verify(refreshToken, REFRESH_TOKEN_SECRET) instanceof Error)
-    );
+  public tokenValid(token: string, secret: string): boolean {
+    try {
+      jwt.verify(token, secret);
+      return true;
+    } catch {
+      return false;
+    }
   }
 
   public generateAccessToken(email: string, username: string): string {
@@ -53,8 +50,8 @@ export class AuthenticationService {
   }
 
   public generateTokens(email: string, username: string): Tokens {
-    const accessToken = this.generateAccessToken(email, username);
-    const refreshToken = this.generateRefreshToken();
+    const accessToken: string = this.generateAccessToken(email, username);
+    const refreshToken: string = this.generateRefreshToken();
 
     return { accessToken, refreshToken };
   }
@@ -67,7 +64,7 @@ export class AuthenticationService {
     return await bcrypt.hash(password, await bcrypt.genSalt(10));
   }
 
-  public async isPasswordValid(password: string, encryptedPassword: string): Promise<boolean> {
+  public async passwordValid(password: string, encryptedPassword: string): Promise<boolean> {
     return await bcrypt.compare(password, encryptedPassword);
   }
 }

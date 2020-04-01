@@ -20,7 +20,7 @@ export class LoginHandler implements BaseHandler {
       const user: UserModel = await MongoUserModel.findOne({ email });
 
       if (user) {
-        if (await this.authService.isPasswordValid(password, user.password)) {
+        if (await this.authService.passwordValid(password, user.password)) {
           const { accessToken, refreshToken } = this.authService.generateTokens(email, user.username);
 
           this.authService.addTokensPair(refreshToken, accessToken);
