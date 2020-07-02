@@ -1,5 +1,5 @@
 import { Router as ExpressRouter } from 'express';
-import { Container, Injectable } from 'DI';
+import { Injectable } from 'DI';
 import { Router, BaseController } from 'models';
 
 import { controllers } from './controllers';
@@ -19,5 +19,3 @@ export class AppRouter implements Router {
     });
   }
 }
-
-export const appRouter = Container.injectSingleton(AppRouter);

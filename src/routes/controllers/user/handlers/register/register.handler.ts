@@ -29,7 +29,10 @@ export class RegisterHandler implements BaseHandler {
         const user: UserModel = await newUser.save();
 
         if (user) {
-          const { accessToken, refreshToken } = this.authService.generateTokens(email, user.username);
+          const { accessToken, refreshToken } = this.authService.generateTokens(
+            email,
+            user.username
+          );
 
           this.authService.addTokensPair(refreshToken, accessToken);
 

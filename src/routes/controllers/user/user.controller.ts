@@ -2,7 +2,9 @@ import { Router as ExpressRouter } from 'express';
 
 import { BaseController, BaseHandler } from 'models';
 import { handlers } from './handlers';
+import { Injectable, Container } from 'DI';
 
+@Injectable()
 export class UserController implements BaseController {
   public path: string;
   public expressRouter: ExpressRouter;
@@ -20,4 +22,4 @@ export class UserController implements BaseController {
   }
 }
 
-export const userController = new UserController();
+export const userController = Container.injectSingleton(UserController);

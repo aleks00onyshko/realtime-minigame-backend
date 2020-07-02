@@ -5,10 +5,10 @@ import mongoose from 'mongoose';
 
 import { PORT, MONGO_URL } from 'utils';
 import { AppRouter } from './routes';
-import { Container, Injectable } from 'DI';
+import { Injectable } from 'DI';
 
 @Injectable()
-class Server {
+export class Server {
   public app: Application;
 
   private readonly port: number;
@@ -42,5 +42,3 @@ class Server {
     this.app.use('/api', this.router.expressRouter);
   }
 }
-
-export default Container.injectSingleton(Server);

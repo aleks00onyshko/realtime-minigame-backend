@@ -26,7 +26,7 @@ export class AuthenticationService {
     return this.tokensMap.has(refreshToken) && this.tokensMap.get(refreshToken) === accessToken;
   }
 
-  public tokenValid(token: string, secret: string): boolean {
+  public isTokenValid(token: string, secret: string): boolean {
     try {
       jwt.verify(token, secret);
       return true;
@@ -64,7 +64,7 @@ export class AuthenticationService {
     return await bcrypt.hash(password, await bcrypt.genSalt(10));
   }
 
-  public async passwordValid(password: string, encryptedPassword: string): Promise<boolean> {
+  public async isPasswordValid(password: string, encryptedPassword: string): Promise<boolean> {
     return await bcrypt.compare(password, encryptedPassword);
   }
 }

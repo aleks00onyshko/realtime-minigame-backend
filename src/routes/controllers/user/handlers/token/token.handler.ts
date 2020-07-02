@@ -30,7 +30,7 @@ export class TokenHandler implements BaseHandler {
       if (
         user &&
         this.authService.tokensPairExist(refreshToken, accessToken) &&
-        this.authService.tokenValid(refreshToken, REFRESH_TOKEN_SECRET)
+        this.authService.isTokenValid(refreshToken, REFRESH_TOKEN_SECRET)
       ) {
         const accessToken = this.authService.generateAccessToken(user.email, user.username);
 
