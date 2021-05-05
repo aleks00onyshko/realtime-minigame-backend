@@ -9,7 +9,7 @@ export class LoginHandler implements BaseHandler {
   public readonly path: string;
   public readonly method: Method;
 
-  constructor(private authService: AuthenticationService) {
+  constructor(private authenticationService: AuthenticationService) {
     this.path = '/login';
     this.method = Method.Post;
   }
@@ -20,15 +20,12 @@ export class LoginHandler implements BaseHandler {
       const user: UserModel = await MongoUserModel.findOne({ email });
 
       if (user) {
-        if (await this.authService.isPasswordValid(password, user.password)) {
-          const { accessToken, refreshToken } = this.authService.generateTokens(
-            email,
-            user.username
-          );
+        if (await this.authenticationService.isPasswordValid(password, user.password)) {
+          const tokens = this.authenticationService.generateTokens();
 
-          this.authService.addTokensPair(refreshToken, accessToken);
+          this.authenticationService.addTokensPair(tokens);
 
-          return res.status(Status.Success).json({ accessToken, refreshToken });
+          return res.status(Status.Success).json({ ...tokens });
         } else {
           return res.status(Status.Error).json({ message: Errors.InvalidPassword });
         }

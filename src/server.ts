@@ -11,19 +11,19 @@ import { Injectable } from 'DI';
 export class Server {
   public app: Application;
 
-  private readonly port: number;
+  private readonly _port: number;
 
   constructor(private router: AppRouter) {
     this.app = express();
-    this.port = PORT || 3000;
+    this._port = PORT || 3000;
 
     this.setMiddlewares();
     this.setDatabaseConnection();
     this.setRouter();
   }
 
-  public getPort(): number {
-    return this.port;
+  public get port(): number {
+    return this._port;
   }
 
   private setMiddlewares(): void {

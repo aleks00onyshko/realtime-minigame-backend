@@ -10,7 +10,7 @@ export class RegisterHandler implements BaseHandler {
   public readonly path: string;
   public readonly method: Method;
 
-  constructor(private authService: AuthenticationService) {
+  constructor(private authenticationService: AuthenticationService) {
     this.path = '/register';
     this.method = Method.Post;
   }
@@ -24,19 +24,16 @@ export class RegisterHandler implements BaseHandler {
       if (!user) {
         const newUser: UserModel = new MongoUserModel({ email, password, username });
 
-        newUser.password = await this.authService.encryptPassword(password);
+        newUser.password = await this.authenticationService.encryptPassword(password);
 
         const user: UserModel = await newUser.save();
 
         if (user) {
-          const { accessToken, refreshToken } = this.authService.generateTokens(
-            email,
-            user.username
-          );
+          const tokens = this.authenticationService.generateTokens();
 
-          this.authService.addTokensPair(refreshToken, accessToken);
+          this.authenticationService.addTokensPair(tokens);
 
-          return res.status(Status.Success).json({ accessToken, refreshToken });
+          return res.status(Status.Success).json({ ...tokens });
         } else {
           return res.status(Status.Error).json({ message: Errors.Error });
         }
