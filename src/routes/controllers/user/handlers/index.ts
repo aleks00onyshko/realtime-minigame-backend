@@ -1,14 +1,17 @@
 import { BaseHandler } from 'models';
-import { loginHandler } from './login';
-import { registerHandler } from './register';
-import { tokenHandler } from './token';
-import { verifyAuthenticationCodeHandler } from './verify-authentication-code';
-import { verifyEmailHandler } from './verify-email';
+import { LoginHandler } from './login';
+import { RegisterHandler } from './register';
+import { TokenHandler } from './token';
+import { VerifyAuthenticationCodeHandler } from './verify-authentication-code';
+import { VerifyEmailHandler } from './verify-email';
+import { EmailExistHandler } from './email-exist';
+import { Container, Type } from 'helpers';
 
 export const handlers: BaseHandler[] = [
-  loginHandler,
-  registerHandler,
-  tokenHandler,
-  verifyEmailHandler,
-  verifyAuthenticationCodeHandler
-];
+  LoginHandler,
+  RegisterHandler,
+  TokenHandler,
+  VerifyEmailHandler,
+  VerifyAuthenticationCodeHandler,
+  EmailExistHandler
+].map((handler: Type<BaseHandler>) => Container.injectSingleton(handler));

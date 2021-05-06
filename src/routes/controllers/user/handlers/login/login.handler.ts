@@ -2,7 +2,14 @@ import { RequestHandler, Request, Response } from 'express';
 
 import { BaseHandler, MongoUserModel, UserModel } from 'models';
 import { Method, Status, AuthenticationService, Errors } from 'core';
-import { Injectable, Container } from 'DI';
+import { Injectable } from 'DI';
+
+interface LoginRequest extends Request {
+  body: {
+    email: string;
+    password: string;
+  };
+}
 
 @Injectable()
 export class LoginHandler implements BaseHandler {
@@ -15,7 +22,7 @@ export class LoginHandler implements BaseHandler {
   }
 
   public handle(): RequestHandler {
-    return async (req: Request, res: Response): Promise<Response> => {
+    return async (req: LoginRequest, res: Response): Promise<Response> => {
       const { email, password } = req.body;
       const user: UserModel = await MongoUserModel.findOne({ email });
 
@@ -35,5 +42,3 @@ export class LoginHandler implements BaseHandler {
     };
   }
 }
-
-export const loginHandler = Container.injectSingleton(LoginHandler);

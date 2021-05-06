@@ -1,7 +1,7 @@
 import { BaseHandler } from 'models';
 import { Method, AuthenticationService, Status, Errors } from 'core';
 import { Request, Response, RequestHandler } from 'express';
-import { Injectable, Container } from 'DI';
+import { Injectable } from 'DI';
 
 interface TokenHandlerRequest extends Request {
   body: {
@@ -42,5 +42,3 @@ export class TokenHandler implements BaseHandler {
     };
   }
 }
-
-export const tokenHandler = Container.injectSingleton(TokenHandler);

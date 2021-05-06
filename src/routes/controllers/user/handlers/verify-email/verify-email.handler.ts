@@ -1,7 +1,13 @@
 import { RequestHandler, Request, Response } from 'express';
-import { AuthenticationService, Errors, Method, Status } from '../../../../../core';
-import { Container, Injectable } from '../../../../../helpers';
-import { BaseHandler, MongoUserModel, UserModel } from '../../../../../models';
+import { AuthenticationService, Errors, Method, Status } from 'core';
+import { Injectable } from 'helpers';
+import { BaseHandler, MongoUserModel, UserModel } from 'models';
+
+interface VerifyEmailRequest extends Request {
+  body: {
+    email: string;
+  };
+}
 
 @Injectable()
 export class VerifyEmailHandler implements BaseHandler {
@@ -14,7 +20,7 @@ export class VerifyEmailHandler implements BaseHandler {
   }
 
   public handle(): RequestHandler {
-    return async (req: Request, res: Response): Promise<Response> => {
+    return async (req: VerifyEmailRequest, res: Response): Promise<Response> => {
       const { email } = req.body;
 
       const user: UserModel = await MongoUserModel.findOne({ email });
@@ -33,5 +39,3 @@ export class VerifyEmailHandler implements BaseHandler {
     };
   }
 }
-
-export const verifyEmailHandler = Container.injectSingleton(VerifyEmailHandler);
